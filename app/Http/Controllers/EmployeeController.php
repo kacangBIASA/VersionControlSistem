@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Employee;
 
 class EmployeeController extends Controller
 {
@@ -152,11 +153,8 @@ class EmployeeController extends Controller
      */
     public function destroy(string $id)
     {
-        // DELETE QUERY BUILDER
-        DB::table('employees')
-            ->where('id', $id)
-            ->delete();
-
+        // ElOQUENT
+        Employee::find($id)->delete();
         return redirect()->route('employees.index');
     }
 }
