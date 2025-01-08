@@ -1,97 +1,85 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $pageTitle }}</title>
-    @vite('resources/sass/app.scss')
-</head>
-
-<body>
-    <nav class="navbar navbar-expand-md navbar-dark bg-primary">
-        <div class="container">
-            <a href="{{ route('home') }}" class="navbar-brand mb-0 h1"><i class="bi-hexagon-fill me-2"></i> Data
-                Master</a>
-            <button type="button" class="navbar-toggler" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <hr class="d-lg-none text-white-50">
-                <ul class="navbar-nav flex-row flex-wrap">
-                    <li class="nav-item col-2 col-md-auto"><a href="{{ route('home') }}" class="nav-link">Home</a></li>
-                    <li class="nav-item col-2 col-md-auto"><a href="{{ route('employees.index') }}"
-                            class="nav-link active">Employee List</a></li>
-                </ul>
-                <hr class="d-lg-none text-white-50">
-                <a href="{{ route('profile') }}" class="btn btn-outline-light my-2 ms-md-auto"><i
-                        class="bi-person-circle me-1"></i> My Profile</a>
-            </div>
-        </div>
-    </nav>
-    <div class="container mt-4">
-        <div class="row mb-0">
-            <div class="col-lg-9 col-xl-10">
-                <h4 class="mb-3">{{ $pageTitle }}</h4>
-            </div>
-            <div class="col-lg-3 col-xl-2">
-                <div class="d-grid gap-2">
-                    <a href="{{ route('employees.create') }}" class="btn btn-primary">Create Employee</a>
+@extends('layouts.app')
+@section('content')
+    <div class="container-sm my-5">
+        <form action="{{ route('employees.store') }}" method="POST">
+            @csrf
+            <div class="row justify-content-center">
+                {{-- Dan Seterusnya --}}
+                <div class="p-5 bg-light rounded-3 border col-xl-6">
+                    <div class="mb-3 text-center">
+                        <i class="bi-person-circle fs-1"></i>
+                        <h4>Create Employee</h4>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="firstName" class="form-label">First
+                                Name</label>
+                            <input class="form-control @error('firstName')
+            is-invalid @enderror" type="text"
+                                name="firstName" id="firstName" value="{{ old('firstName') }}"
+                                placeholder="Enter First Name">
+                            @error('firstName')
+                                <div class="text-danger"><small>{{ $message }}</small></div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="lastName" class="form-label">LastName</label>
+                            <input class="form-control @error('lastName')
+            is-invalid @enderror" type="text"
+                                name="lastName" id="lastName" value="{{ old('lastName') }}" placeholder="Enter Last Name">
+                            @error('lastName')
+                                <div class="text-danger"><small>{{ $message }}</small></div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input class="form-control @error('email') is-invalid
+            @enderror" type="text"
+                                name="email" id="email" value="{{ old('email') }}" placeholder="Enter Email">
+                            @error('email')
+                                <div class="text-danger"><small>{{ $message }}</small></div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="age" class="form-label">Age</label>
+                            <input class="form-control @error('age') is-invalid
+            @enderror" type="text"
+                                name="age" id="age" value="{{ old('age') }}" placeholder="Enter Age">
+                            @error('age')
+                                <div class="text-danger"><small>{{ $message }}</small></div>
+                            @enderror
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label for="position" class="form-label">Position</label>
+                            <select name="position" id="position" class="form-select">
+                                @foreach ($positions as $position)
+                                    <option value="{{ $position->id }}"
+                                        {{ old('position') == $position->id ? 'selected' : '' }}>
+                                        {{ $position->code . ' - ' . $position->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('position')
+                                <div class="text-danger"><small>{{ $message }}</small></div>
+                            @enderror
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-6 d-grid">
+                            <a href="{{ route('employees.index') }}"
+                                class="btn
+            btn-outline-dark btn-lg mt-3"><i
+                                    class="bi-arrow-left-circle me-2"></i>Cancel</a>
+                        </div>
+                        <div class="col-md-6 d-grid">
+                            <button type="submit" class="btn btn-dark btn-lg
+            mt-3"><i
+                                    class="bi-check-circle me-2"></i> Save</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <hr>
-        <div class="table-responsive border p-3 rounded-3">
-            <table class="table table-bordered table-hover table-striped mb-0 bgwhite">
-                <thead>
-                    <tr>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Email</th>
-                        <th>Age</th>
-                        <th>Position</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($employees as $employee)
-                        <tr>
-                            <td>{{ $employee->firstname }}</td>
-                            <td>{{ $employee->lastname }}</td>
-                            <td>{{ $employee->email }}</td>
-                            <td>{{ $employee->age }}</td>
-                            <td>{{ $employee->position_name }}</td>
-                            <td>
-                                <div class="d-flex">
-                                    <a href="{{ route('employees.show', ['employee' => $employee->employee_id]) }}"
-                                        class="btn btn-outline-dark btn-sm me-
-                2"><i
-                                            class="bi-person-lines-fill"></i></a>
-                                    <a href="{{ route('employees.edit', ['employee' => $employee->employee_id]) }}"
-                                        class="btn btn-outline-dark btn-sm me-
-                2"><i
-                                            class="bi-pencil-square"></i></a>
-                                    <div>
-                                        <form
-                                            action="{{ route('employees.destroy', ['employee' => $employee->employee_id]) }}"
-                                            method="POST">
-                                            @csrf
-                                            @method('delete')
-                                            <button type="submit" class="btn btnoutline-dark btn-sm me-2"><i
-                                                    class="bi-trash"></i></button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+        </form>
     </div>
-    @vite('resources/js/app.js')
-</body>
-
-</html>
+@endsection
